@@ -1,8 +1,8 @@
-import { IRowTreeData } from "@/types/rows.types";
 import DeskLevelControls from "../desk-level-controls/DeskLevelControls";
 import styles from "./DeskTableItem.module.scss"
+import { IDeskTableItemProps } from "./desk-table-item.types";
 
-const DeskTableItem: React.FC<{ tree: IRowTreeData, level: number }> = ({ tree, level }) => {
+const DeskTableItem: React.FC<IDeskTableItemProps> = ({ tree, level }) => {
     return (
         <section className={styles.table_row}>
             <div className={styles.table_row_item}>

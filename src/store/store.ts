@@ -1,7 +1,9 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { rowsApi } from "../services/rows.service";
+import typeRequestReducers from "./type-request.slice";
 
 const reducer = combineReducers({
+    typeRequest: typeRequestReducers,
     [rowsApi.reducerPath]: rowsApi.reducer,
 })
 

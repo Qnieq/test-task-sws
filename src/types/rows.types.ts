@@ -21,7 +21,7 @@ export interface ICreateRowData {
     materials: number;
     mimExploitation: number;
     overheads: number;
-    parentId: number;
+    parentId: number | null;
     rowName: string;
     salary: number;
     supportCosts: number;
@@ -53,7 +53,7 @@ export interface IUpdateRowRequest {
 
 export interface IUpdateRowResponse extends ICreateRowResponse {}
 
-export interface IDeleteRowRequest extends Omit<IUpdateRowRequest, "data"> {}
+export interface IDeleteRowRequest extends Omit<IUpdateRowRequest, "data" | "parentId"> {}
 export interface IDeleteRowResponse extends Omit<IUpdateRowRequest, "current"> {
     current: null
 }

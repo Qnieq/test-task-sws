@@ -1,0 +1,28 @@
+@import "@/mixins";
+
+.level_control {
+    width: 50px;
+    padding: 0 2px;
+    @include flex(center, flex-start);
+    gap: 5px;
+    transition: 0.3s ease-in-out;
+    border-radius: 10px;
+    z-index: 9;
+
+    .delete_row {
+        display: none;
+    }
+
+    &:hover {
+        background: var(--border);
+
+        .delete_row {
+            display: block !important;
+            cursor: pointer;
+        }
+    }
+
+    .add_new_row {
+        cursor: pointer;
+    }
+}

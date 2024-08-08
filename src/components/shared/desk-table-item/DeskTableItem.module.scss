@@ -9,8 +9,9 @@
     border-bottom: 2px solid var(--border);
 
     .table_row_item {
-        padding: 0 20px;
         min-width: 50px;
+        @include flex(center, flex-start);
+        padding: 0 20px;
 
         .item_name {
             @include text-settings(13px, 1vw, 15px, var(--title));

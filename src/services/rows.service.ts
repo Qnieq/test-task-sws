@@ -25,7 +25,7 @@ export const rowsApi = createApi({
 
         updateRow: builder.mutation<IUpdateRowResponse, IUpdateRowRequest>({
             query: (data) => ({
-                url: `/${data.parentId}/row/${data.rowId}/update`,
+                url: `/${MAIN_ROW_ID.eID}/row/${data.rowId}/update`,
                 method: "POST",
                 body: data.data
             })
@@ -40,7 +40,7 @@ export const rowsApi = createApi({
 
         deleteRow: builder.mutation<IDeleteRowResponse, IDeleteRowRequest>({
             query: (data) => ({
-                url: `/${data.parentId}/row/${data.rowId}/delete`,
+                url: `/${MAIN_ROW_ID.eID}/row/${data.rowId}/delete`,
                 method: "DELETE"
             })
         }),

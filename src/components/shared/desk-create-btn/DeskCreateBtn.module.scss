@@ -1,0 +1,14 @@
+.btn {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    border-radius: 10px;
+    margin-top: 5px;
+    transition: .3s ease-in-out;
+
+    &:hover {
+        background: var(--bg-hover);
+    }
+}

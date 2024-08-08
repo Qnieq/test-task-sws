@@ -4,8 +4,8 @@ import { Dispatch, SetStateAction } from "react";
 export interface IRowsContext {
     rowsData: IRowTreeData[]
     setRowsData: Dispatch<SetStateAction<IRowTreeData[]>>
-    setRowCreateData: Dispatch<SetStateAction<ICreateRowData | null>>
-    setRowParentId: Dispatch<SetStateAction<number>>
+    setNewRowData: Dispatch<SetStateAction<{data: ICreateRowData, typeReq: string}>>
+    setRowParentId: Dispatch<SetStateAction<number | null>>
     rowParentId: number
     rowId: number
     setRowId: Dispatch<SetStateAction<number>>
