@@ -12,7 +12,7 @@ import { MAIN_ROW_ID } from "../constants/row.constants";
 
 export const rowsApi = createApi({
     reducerPath: "rowsApi",
-    baseQuery: fetchBaseQuery({ baseUrl: `/v1/outlay-rows/entity/${MAIN_ROW_ID.eID}/row` }),
+    baseQuery: fetchBaseQuery({ baseUrl: `v1/outlay-rows/entity/${MAIN_ROW_ID.eID}/row` }),
     endpoints: (builder) => ({
         createRowInEntity: builder.mutation<ICreateRowResponse, ICreateRowData>({
             query: (data) => ({
