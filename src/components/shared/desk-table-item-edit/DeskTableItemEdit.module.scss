@@ -11,10 +11,15 @@
     .table_row_item {
         padding: 0 20px;
         min-width: 50px;
-        border: 2px solid var(--border);
 
         .item_name {
             @include text-settings(13px, 1vw, 15px, var(--title));
+            background: var(--bg);
+            width: 98%;
+            border: 2px solid var(--border);
+            height: 30px;
+            border-radius: 10px;
+            padding: 0 10px;
         }
     }
 }

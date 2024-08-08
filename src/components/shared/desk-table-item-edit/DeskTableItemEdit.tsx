@@ -9,13 +9,13 @@ const DeskTableItemEdit: React.FC<IDeskTableItemEditProps> = ({ level }) => {
 
     const [isEnterDown, setIsEnterDown] = useState<boolean>(false)
 
-    const { setRowCreateData, rowEditId, setRowsData, rowsData } = useRows()
+    const { setRowCreateData, rowId, setRowsData, rowsData, rowParentId } = useRows()
 
     const [rowData, setRowData] = useState<IRowTreeData>({
         child: [],
         equipmentCosts: 0,
         estimatedProfit: 0,
-        id: 0,
+        id: rowId,
         machineOperatorSalary: 0,
         mainCosts: 0,
         materials: 0,
@@ -27,26 +27,29 @@ const DeskTableItemEdit: React.FC<IDeskTableItemEditProps> = ({ level }) => {
         total: 0
     })
 
-    // const editRow = () => {
-    //     const editRowInTree = (rows: IRowTreeData[]): IRowTreeData[] => {
-    //         return rows.map((row) => {
-    //             if (row.id === rowEditId) {
-    //                 return {
-    //                     ...row,
-    //                     ...rowData,
-    //                     child: row.child,
-    //                 };
-    //             } else if (row.child && row.child.length > 0) {
-    //                 return {
-    //                     ...row,
-    //                     child: editRowInTree(row.child)
-    //                 };
-    //             }
-    //             return row;
-    //         });
-    //     };
-    //     setRowsData(editRowInTree(rowsData));
-    // };
+    const editRow = () => {
+        const editRowInTree = (rows: IRowTreeData[]): IRowTreeData[] => {
+            return rows.map((row) => {
+                if (row.id === rowId) {
+                    return {
+                        ...rowData,
+                        child: row.child,
+                    };
+                } else if (row.id != rowId) {
+                    return {
+                        ...row,
+                        child: editRowInTree(row.child)
+                    };
+                }
+                return row;
+            });
+        };
+        setRowsData(editRowInTree(rowsData));
+    };
+
+    useEffect(() => {
+        editRow()
+    }, [rowData])
 
 
     useEffect(() => {
@@ -74,7 +77,7 @@ const DeskTableItemEdit: React.FC<IDeskTableItemEditProps> = ({ level }) => {
                 rowName: rowData.rowName,
                 salary: rowData.salary,
                 supportCosts: rowData.supportCosts,
-                parentId: rowEditId
+                parentId: rowParentId
             })
         }
     }, [isEnterDown])
@@ -92,7 +95,7 @@ const DeskTableItemEdit: React.FC<IDeskTableItemEditProps> = ({ level }) => {
                         setRowData((value) => ({
                             ...value,
                             rowName: e.target.value
-                        })), editRow()
+                        }))
                     }}
                 />
             </div>
@@ -116,7 +119,7 @@ const DeskTableItemEdit: React.FC<IDeskTableItemEditProps> = ({ level }) => {
                         setRowData((value) => ({
                             ...value,
                             equipmentCosts: Number(e.target.value)
-                        })), editRow()
+                        }))
                     }}
                 />
             </div>
@@ -128,7 +131,7 @@ const DeskTableItemEdit: React.FC<IDeskTableItemEditProps> = ({ level }) => {
                         setRowData((value) => ({
                             ...value,
                             overheads: Number(e.target.value)
-                        })), editRow()
+                        }))
                     }}
                 />
             </div>
@@ -140,7 +143,7 @@ const DeskTableItemEdit: React.FC<IDeskTableItemEditProps> = ({ level }) => {
                         setRowData((value) => ({
                             ...value,
                             estimatedProfit: Number(e.target.value)
-                        })), editRow()
+                        }))
                     }}
                 />
             </div>

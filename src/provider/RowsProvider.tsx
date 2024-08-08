@@ -23,7 +23,8 @@ const RowsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         total: 0
     }])
     const [rowCreateData, setRowCreateData] = useState<ICreateRowData | null>(null)
-    const [rowEditId, setRowEditId] = useState<number>()
+    const [rowParentId, setRowParentId] = useState<number>()
+    const [rowId, setRowId] = useState<number>()
 
     const { data: treeData } = useGetRowTreeQuery(null)
     const [createRowInEntity, { data: createResponseData }] = useCreateRowInEntityMutation()
@@ -47,20 +48,21 @@ const RowsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 rowName: rowCreateData!.rowName,
                 salary: rowCreateData!.salary,
                 supportCosts: rowCreateData!.supportCosts,
-                parentId: rowEditId!
+                parentId: rowParentId!
             })
             setRowCreateData(null)
         }
-        console.log(rowsData)
-    }, [rowCreateData, rowsData])
+    }, [rowCreateData])
 
     return (
         <RowsContext.Provider value={{
             setRowsData,
             rowsData,
             setRowCreateData,
-            setRowEditId,
-            rowEditId
+            setRowParentId,
+            rowParentId,
+            setRowId,
+            rowId
         } as IRowsContext}>
             {children}
         </RowsContext.Provider>

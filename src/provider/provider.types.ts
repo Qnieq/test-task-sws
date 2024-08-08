@@ -5,6 +5,8 @@ export interface IRowsContext {
     rowsData: IRowTreeData[]
     setRowsData: Dispatch<SetStateAction<IRowTreeData[]>>
     setRowCreateData: Dispatch<SetStateAction<ICreateRowData | null>>
-    setRowEditId: Dispatch<SetStateAction<number>>
-    rowEditId: number
+    setRowParentId: Dispatch<SetStateAction<number>>
+    rowParentId: number
+    rowId: number
+    setRowId: Dispatch<SetStateAction<number>>
 }
