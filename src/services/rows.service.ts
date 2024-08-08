@@ -10,14 +10,13 @@ import {
 } from "../types/rows.types";
 import { MAIN_ROW_ID } from "../constants/row.constants";
 
-
 export const rowsApi = createApi({
     reducerPath: "rowsApi",
-    baseQuery: fetchBaseQuery({ baseUrl: `http://185.244.172.108:8081/v1/outlay-rows/entity` }),
+    baseQuery: fetchBaseQuery({ baseUrl: `http://185.244.172.108:8081/v1/outlay-rows/entity/${MAIN_ROW_ID.eID}/row` }),
     endpoints: (builder) => ({
         createRowInEntity: builder.mutation<ICreateRowResponse, ICreateRowData>({
             query: (data) => ({
-                url: `/${MAIN_ROW_ID.eID}/row/create`,
+                url: `/create`,
                 method: "POST",
                 body: data
             })
@@ -25,7 +24,7 @@ export const rowsApi = createApi({
 
         updateRow: builder.mutation<IUpdateRowResponse, IUpdateRowRequest>({
             query: (data) => ({
-                url: `/${MAIN_ROW_ID.eID}/row/${data.rowId}/update`,
+                url: `/${data.rowId}/update`,
                 method: "POST",
                 body: data.data
             })
@@ -33,14 +32,14 @@ export const rowsApi = createApi({
 
         getRowTree: builder.query<IRowTreeData[], null>({
             query: () => ({
-                url: `/${MAIN_ROW_ID.eID}/row/list`,
+                url: `/list`,
                 method: "GET"
             })
         }),
 
         deleteRow: builder.mutation<IDeleteRowResponse, IDeleteRowRequest>({
             query: (data) => ({
-                url: `/${MAIN_ROW_ID.eID}/row/${data.rowId}/delete`,
+                url: `/${data.rowId}/delete`,
                 method: "DELETE"
             })
         }),

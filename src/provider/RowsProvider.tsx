@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { IRowsContext } from "./provider.types";
-import { ICreateRowData, IRowTreeData } from "@/types/rows.types";
+import { ICreateRowData, ICreateRowResponse, IRowTreeData } from "@/types/rows.types";
 import {
     useCreateRowInEntityMutation,
     useDeleteRowMutation,
@@ -9,101 +9,156 @@ import {
 } from "@/services/rows.service";
 import { useTypeRequest } from "@/hooks/useTypeRequest";
 
+// Создаем контекст для управления данными строк, который будет доступен для компонентов, использующих этот контекст
 export const RowsContext = createContext<IRowsContext>({} as IRowsContext);
 
 const RowsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    // Хранение данных строк в виде дерева
     const [rowsData, setRowsData] = useState<IRowTreeData[]>([]);
-    const [newRowData, setNewRowData] = useState<{
-        data: ICreateRowData;
-        typeReq: string;
-    } | null>(null);
 
+    // Хранение данных новой строки и типа запроса (create/update)
+    const [newRowData, setNewRowData] = useState<ICreateRowData | null>(null);
+
+    // Хранение ID родительской строки и строки, которую нужно обновить
     const [rowParentId, setRowParentId] = useState<number>();
     const [rowId, setRowId] = useState<number>();
 
-    const {typeRequest} = useTypeRequest()
+    // Хук для получения типа текущего запроса (create/update/delete)
+    const { typeRequest } = useTypeRequest();
 
+    // Хук для получения данных дерева строк из API
     const { data: treeData } = useGetRowTreeQuery(null);
-    const [createRowInEntity, { data: createResponseData }] = useCreateRowInEntityMutation();
-    const [updateRow] = useUpdateRowMutation();
-    const [deleteRow] = useDeleteRowMutation();
-    // , { data: updateResponseData }
 
+    // Хуки для выполнения мутаций: создание, обновление и удаление строк
+    const [createRowInEntity, { data: createResponseData }] = useCreateRowInEntityMutation();
+    const [updateRow, { data: updateResponseData }] = useUpdateRowMutation();
+    const [deleteRow] = useDeleteRowMutation();
+
+    // Обновляем состояние данных строк при изменении данных из API
     useEffect(() => {
         if (treeData) {
             setRowsData(treeData);
         }
     }, [treeData]);
 
+    // Функция для обновления дерева строк с учетом ответа API
+    const updateTreeWithResponse = (tree: IRowTreeData[], response: ICreateRowResponse): IRowTreeData[] => {
+        // Создаем мапу для быстрого поиска изменений по ID
+        const changedMap = new Map<number, IRowTreeData>(
+            response.changed.map(item => [item.id, item])
+        );
+
+        // Рекурсивно обновляем дерево строк
+        const updateRow = (row: IRowTreeData): IRowTreeData => {
+            // Находим изменения для текущего узла
+            const changed = changedMap.get(row.id);
+
+            // Если изменения есть, применяем их
+            if (changed) {
+                return {
+                    ...row,
+                    ...changed, // Обновляем все поля, которые есть в `changed`
+                    child: row.child ? row.child.map(updateRow) : []
+                };
+            }
+
+            // Если изменений нет, рекурсивно обновляем дочерние элементы
+            return {
+                ...row,
+                child: row.child ? row.child.map(updateRow) : []
+            };
+        };
+
+        // Обновляем все узлы в дереве
+        return tree.map(updateRow);
+    };
+
+    // Обновляем состояние данных строк при получении ответа на создание или обновление
+    useEffect(() => {
+        if (createResponseData) {
+            const updatedTree = updateTreeWithResponse(rowsData, createResponseData);
+            setRowsData(updatedTree);
+        } else if (updateResponseData) {
+            const updatedTree = updateTreeWithResponse(rowsData, updateResponseData);
+            setRowsData(updatedTree);
+        }
+    }, [createResponseData, updateResponseData]);
+
+    // Обрабатываем запрос на создание, обновление или удаление строки
     useEffect(() => {
         if (newRowData) {
-            if (newRowData.typeReq === "create") {
+            if (typeRequest.typeReq === "create") {
                 createRowInEntity({
-                    equipmentCosts: newRowData.data.equipmentCosts,
-                    estimatedProfit: newRowData.data.estimatedProfit,
-                    machineOperatorSalary: newRowData.data.machineOperatorSalary,
-                    mainCosts: newRowData.data.mainCosts,
-                    materials: newRowData.data.materials,
-                    mimExploitation: newRowData.data.mimExploitation,
-                    overheads: newRowData.data.overheads,
-                    rowName: newRowData.data.rowName,
-                    salary: newRowData.data.salary,
-                    supportCosts: newRowData.data.supportCosts,
+                    equipmentCosts: newRowData.equipmentCosts,
+                    estimatedProfit: newRowData.estimatedProfit,
+                    machineOperatorSalary: newRowData.machineOperatorSalary,
+                    mainCosts: newRowData.mainCosts,
+                    materials: newRowData.materials,
+                    mimExploitation: newRowData.mimExploitation,
+                    overheads: newRowData.overheads,
+                    rowName: newRowData.rowName,
+                    salary: newRowData.salary,
+                    supportCosts: newRowData.supportCosts,
                     parentId: rowParentId as null | number,
                 });
-            } else if (newRowData.typeReq === "update") {
+            } else if (typeRequest.typeReq === "update") {
                 updateRow({
                     data: {
-                        equipmentCosts: newRowData.data.equipmentCosts,
-                        estimatedProfit: newRowData.data.estimatedProfit,
-                        machineOperatorSalary: newRowData.data.machineOperatorSalary,
-                        mainCosts: newRowData.data.mainCosts,
-                        materials: newRowData.data.materials,
-                        mimExploitation: newRowData.data.mimExploitation,
-                        overheads: newRowData.data.overheads,
-                        rowName: newRowData.data.rowName,
-                        salary: newRowData.data.salary,
-                        supportCosts: newRowData.data.supportCosts,
+                        equipmentCosts: newRowData.equipmentCosts,
+                        estimatedProfit: newRowData.estimatedProfit,
+                        machineOperatorSalary: newRowData.machineOperatorSalary,
+                        mainCosts: newRowData.mainCosts,
+                        materials: newRowData.materials,
+                        mimExploitation: newRowData.mimExploitation,
+                        overheads: newRowData.overheads,
+                        rowName: newRowData.rowName,
+                        salary: newRowData.salary,
+                        supportCosts: newRowData.supportCosts,
                     },
-                    parentId: rowsData[0].id,
-                    rowId: rowId!,
+                    parentId: rowsData[0].id, // Устанавливаем parentId для обновления строки
+                    rowId: rowId!, // Обновляем строку по её ID
                 });
             }
-            setNewRowData(null);
+            setNewRowData(null); // Сбрасываем данные новой строки после обработки
         } else if (typeRequest.typeReq === "delete") {
             deleteRow({
-                rowId: rowId!
-            })
+                rowId: rowId! // Удаляем строку по её ID
+            });
         }
-    }, [newRowData?.data, newRowData?.typeReq, typeRequest.typeReq]);
+    }, [newRowData, typeRequest.typeReq]);
 
+    // Обновляем строку при получении новых данных из ответа создания
     useEffect(() => {
-        const editRow = () => {
-            const editRowInTree = (rows: IRowTreeData[]): IRowTreeData[] => {
-                return rows.map((row) => {
-                    if (row.id === rowId) {
-                        return {
-                            ...createResponseData!.current,
-                            id: createResponseData!.current.id,
-                            child: row.child,
-                        };
-                    } else if (row.id != rowId) {
-                        return {
-                            ...row,
-                            child: editRowInTree(row.child),
-                        };
-                    }
-                    return row;
-                });
-            };
-            setRowsData(editRowInTree(rowsData));
+        const editRow = (rows: IRowTreeData[]): IRowTreeData[] => {
+            return rows.map((row) => {
+                if (row.id === rowId) {
+                    console.log(rowsData, {
+                        ...createResponseData!.current,
+                        child: row.child,
+                    });
+                    return {
+                        ...createResponseData!.current,
+                        child: row.child,
+                    };
+                }
+
+                if (row.child && row.child.length > 0) {
+                    return {
+                        ...row,
+                        child: editRow(row.child),
+                    };
+                }
+
+                return row;
+            });
         };
 
         if (createResponseData) {
-            editRow();
+            setRowsData((prevRows) => editRow(prevRows));
         }
     }, [createResponseData]);
 
+    // Предоставляем состояние и функции управления строками через контекст
     return (
         <RowsContext.Provider
             value={

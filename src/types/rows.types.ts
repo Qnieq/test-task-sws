@@ -28,8 +28,8 @@ export interface ICreateRowData {
 }
 
 export interface ICreateRowResponse {
-    current: IRowData;
-    changed: IRowData[];
+    current: IRowTreeData;
+    changed: IRowTreeData[];
 }
 
 export interface IUpdateRowData {
@@ -73,3 +73,8 @@ export interface IRowTreeData {
     estimatedProfit: number;
     child: IRowTreeData[];
 }
+
+export interface IRowTreeResponse {
+    current: IRowTreeData;
+    changed: IRowTreeData[];
+  }

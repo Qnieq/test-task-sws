@@ -1,7 +1,6 @@
 import { useState, useEffect, MouseEvent } from 'react';
 
-const useTypeClick = (
-    actionSimpleClick: (e: MouseEvent) => void,
+const useDoubleClick = (
     actionDoubleClick: (e: MouseEvent) => void,
     delay = 250
 ) => {
@@ -10,18 +9,17 @@ const useTypeClick = (
     useEffect(() => {
         const timer = setTimeout(() => {
 
-            if (state.click === 1) actionSimpleClick(state.e!);
             setState({ e: state.e, click: 0 });
         }, delay);
 
         if (state.click === 2) actionDoubleClick(state.e!);
 
         return () => clearTimeout(timer);
-    }, [state, actionSimpleClick, actionDoubleClick, delay]);
+    }, [state, actionDoubleClick, delay]);
 
     return (e: MouseEvent) => {
         setState({ click: state.click + 1, e });
     };
 };
 
-export default useTypeClick;
+export default useDoubleClick;

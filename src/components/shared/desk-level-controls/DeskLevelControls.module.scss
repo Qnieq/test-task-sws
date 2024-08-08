@@ -1,28 +1,47 @@
 @import "@/mixins";
 
 .level_control {
-    width: 50px;
-    padding: 0 2px;
-    @include flex(center, flex-start);
-    gap: 5px;
-    transition: 0.3s ease-in-out;
-    border-radius: 10px;
-    z-index: 9;
+    position: relative;
 
-    .delete_row {
-        display: none;
+    .line {
+        width: 16px;
+        height: 62px;
+        border-left: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+        position: absolute;
+        left: 0px;
+        top: -48px;
+        pointer-events: none;
+        z-index: 1;
     }
 
-    &:hover {
-        background: var(--border);
+    .block {
+        position: relative;
+        padding: 5px 10px;
+        @include flex(center, flex-start);
+        gap: 5px;
+        transition: 0.3s ease-in-out;
+        border-radius: 10px;
+        z-index: 10;
 
         .delete_row {
-            display: block !important;
+            display: none;
+        }
+
+        &:hover {
+            background: var(--border);
+            z-index: 10;
+
+            .delete_row {
+                display: block !important;
+                cursor: pointer;
+            }
+        }
+
+        .add_new_row {
             cursor: pointer;
+            z-index: 10;
         }
     }
 
-    .add_new_row {
-        cursor: pointer;
-    }
 }
