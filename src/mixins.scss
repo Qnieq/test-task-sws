@@ -1,0 +1,11 @@
+@mixin text-settings($min-size, $value, $max-size, $color) {
+    font-size: clamp($min-size, $value, $max-size);
+    color: $color;
+    margin: 0;
+}
+
+@mixin flex($align-items, $justify-content) {
+    display: flex;
+    align-items: $align-items;
+    justify-content: $justify-content;
+}
