@@ -32,7 +32,7 @@ const RowsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     // Хуки для выполнения мутаций: создание, обновление и удаление строк
     const [createRowInEntity, { data: createResponseData }] = useCreateRowInEntityMutation();
     const [updateRow, { data: updateResponseData }] = useUpdateRowMutation();
-    const [deleteRow] = useDeleteRowMutation();
+    const [deleteRow, { data: deleteResponseData }] = useDeleteRowMutation();
 
     // Обновляем состояние данных строк при изменении данных из API
     useEffect(() => {
@@ -52,7 +52,7 @@ const RowsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         const updateRow = (row: IRowTreeData): IRowTreeData => {
             // Находим изменения для текущего узла
             const changed = changedMap.get(row.id);
-
+            console.log(changed);
             // Если изменения есть, применяем их
             if (changed) {
                 return {
@@ -78,11 +78,22 @@ const RowsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         if (createResponseData) {
             const updatedTree = updateTreeWithResponse(rowsData, createResponseData);
             setRowsData(updatedTree);
-        } else if (updateResponseData) {
+        }
+    }, [createResponseData]);
+
+    useEffect(() => {
+        if (deleteResponseData) {
+            const updatedTree = updateTreeWithResponse(rowsData, deleteResponseData);
+            setRowsData(updatedTree);
+        }
+    }, [deleteResponseData])
+
+    useEffect(() => {
+        if (updateResponseData) {
             const updatedTree = updateTreeWithResponse(rowsData, updateResponseData);
             setRowsData(updatedTree);
         }
-    }, [createResponseData, updateResponseData]);
+    }, [updateResponseData])
 
     // Обрабатываем запрос на создание, обновление или удаление строки
     useEffect(() => {
@@ -132,10 +143,6 @@ const RowsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         const editRow = (rows: IRowTreeData[]): IRowTreeData[] => {
             return rows.map((row) => {
                 if (row.id === rowId) {
-                    console.log(rowsData, {
-                        ...createResponseData!.current,
-                        child: row.child,
-                    });
                     return {
                         ...createResponseData!.current,
                         child: row.child,
