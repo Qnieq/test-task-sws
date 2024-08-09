@@ -136,7 +136,7 @@ const RowsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 rowId: rowId! // Удаляем строку по её ID
             });
         }
-    }, [newRowData, typeRequest.typeReq]);
+    }, [newRowData, typeRequest.typeReq, rowId]);
 
     // Обновляем строку при получении новых данных из ответа создания
     useEffect(() => {
